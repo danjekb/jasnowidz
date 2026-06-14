@@ -39,7 +39,7 @@ jobs:
           ./build_kernel_zip.sh
 
       - name: Upload Flashable Kernel ZIP
-        uses: actions/artifacts@v4
+        uses: actions/upload-artifact@v4  # Poprawione na oficjalną akcję GitHub
         with:
           name: Samsung-A52s-Kernel-OneUI-KSU
           path: ./*.zip # Automatycznie przechwyci wygenerowany plik ZIP z głównego katalogu
