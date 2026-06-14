@@ -1,0 +1,46 @@
+name: Manual Build Samsung A52s Kernel (OneUI)
+
+on:
+  workflow_dispatch: # Wyzwalacz odpowiedzialny WYŁĄCZNIE za ręczne uruchomienie przyciskiem
+
+jobs:
+  build-kernel:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Kernel Source
+        uses: actions/checkout@v4
+        with:
+          submodules: 'recursive' # Pobiera KernelSU-Next oraz inne submoduły automatycznie
+          fetch-depth: 1
+
+      - name: Install Build Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y bc bison build-essential cpio curl flex git \
+            libelf-dev libssl-dev libfl-dev lz4 python3 python-is-python3 \
+            unzip zip libxml2-utils
+
+      - name: Verify Environment and Config
+        run: |
+          echo "=== Sprawdzanie struktury plików ==="
+          ls -la arch/arm64/configs/vendor/a52sxq_kor_single_defconfig || exit 1
+          
+          # UWAGA: Twój skrypt wymaga fizycznej obecności plików bazowych w repozytorium.
+          # Upewnij się, że foldery 'base_images/' (z boot.img i vendor_boot.img),
+          # 'firmware/tsp/' oraz 'nobootlag-template/' znajdują się na Twoim branchu!
+
+      - name: Run Kernel Build Script
+        run: |
+          # Nadanie uprawnień wykonywalności dla skryptu budującego
+          chmod +x build_kernel_zip.sh
+          
+          # Uruchomienie skryptu
+          ./build_kernel_zip.sh
+
+      - name: Upload Flashable Kernel ZIP
+        uses: actions/artifacts@v4
+        with:
+          name: Samsung-A52s-Kernel-OneUI-KSU
+          path: ./*.zip # Automatycznie przechwyci wygenerowany plik ZIP z głównego katalogu
+          if-no-files-found: error
