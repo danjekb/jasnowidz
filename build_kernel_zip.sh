@@ -326,3 +326,4 @@ echo -e "  Root:       ${ROOT_DISPLAY}"
 echo -e "  Output:     ${ZIP_NAME}"
 echo -e "${GREEN}${BOLD}══════════════════════════════════════════════${NC}"
 echo ""
+exit 0
